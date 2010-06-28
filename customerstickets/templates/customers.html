@@ -1,0 +1,56 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="layout.html" />
+  <head>
+    <title>Customers</title>
+  </head>
+
+  <body>
+    <div id="ctxtnav" class="nav"></div>
+
+    <div id="content" class="customers">
+      <h1>Customers</h1>
+      <form class="addnew" id="addcustomer" method="post" action="">
+        <fieldset>
+          <legend>Add/Update Customer:</legend>
+            <input type="hidden" name="id" id="id" value="${customer.id}"/>
+            <label>Name:<input type="text" name="name" id="name" value="${customer.name}"/></label>
+            <label>Label:<input type="text" name="mininame" id="mininame" value="${customer.mininame}"/></label>
+            <label>Milestone:
+              <select id="curmilestone" name="curmilestone" value="${customer.curmilestone}">
+                <option selected="${customer.curmilestone == None or None}"></option>
+                <option py:for="m in milestones" selected="${customer.curmilestone == m.name or None}">$m.name</option>
+              </select>
+            </label>
+            <py:choose>
+                <input py:when="customer == None" type="submit" name="submit" value="add"/>
+                <input py:otherwise="" type="submit" name="submit" value="update"/>
+            </py:choose>
+        </fieldset>
+      </form>
+
+      <py:choose>
+      <form py:when="customers" id="customers_table" method="post" action="">
+        <table class="listing" id="custlist">
+            <thead>
+                <tr><th class="sel">&nbsp;</th><th>id</th><th>Name</th><th>Label</th><th>Milestone</th></tr>
+            </thead>
+            <tbody>
+              <tr py:for="cust in customers">
+                <td><input type="checkbox" name="sel" value="${cust.id}"/></td>
+                <td><a href="${href.customers(cust.id)}">${cust.id}</a></td>
+                <td>${cust.name}</td>
+                <td>${cust.mininame}</td>
+                <td><a href="${href.milestone(cust.curmilestone)}">${cust.curmilestone}</a></td>
+              </tr>
+            </tbody>
+        </table>
+      </form>
+      </py:choose>
+    </div>
+  </body>
+</html>
