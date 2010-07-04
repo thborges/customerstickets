@@ -40,8 +40,8 @@ class Customer(object):
         def do_insert(db):
             cursor = db.cursor()
             cursor.execute("""
-                insert into customer(name,mininame,curmilestone) values (%s,%s,%s)
-                """, (self.name, self.mininame, self.curmilestone))
+                insert into customer(id, name,mininame,curmilestone) values (%s,%s,%s,%s)
+                """, (self.id, self.name, self.mininame, self.curmilestone))
             db.commit()
 
     def update(self, db=None):
