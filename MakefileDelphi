@@ -1,0 +1,29 @@
+#!/bin/bash
+
+LIBS=-U../lib
+OPTIONS=-E../bin -DFINAL $(LIBS)
+DCC32=WINEDEBUG="fixme-all" wine ../../../delphi/bin/dcc32.exe -B $(OPTIONS)
+
+define create_temp_dir
+OUTDCU=$(shell mktemp -d)
+endef
+
+EXES = \
+  SAgrVFat/SAgrVFat.exe \
+  SAgrTran/SAgrTran.exe \
+  SAgrEFis/SAgrEFis.exe \
+
+all: checkout $(EXES)
+	${MAKE} SAgrAdap/SAgrAdap.exe
+	${MAKE} bz2
+
+%exe: %dpr
+	@$(eval $(create_temp_dir))
+	(cd $(shell echo $< | sed "s/\(.*\)\/.*/\1/"); pwd; $(DCC32) -N0$(OUTDCU) $(shell echo $< | sed "s/.*\/\(.*\)/\1/"); rm -Rf $(OUTDCU))
+
+checkout:
+	rm -f bin/*
+	git checkout $(BRANCH)
+
+bz2:
+	(cd bin; tar cfz $(BRANCH).tar.bz2 *.exe)
